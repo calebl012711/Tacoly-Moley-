@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700&family=Permanent+Marker&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Playfair Display", serif;
+  --font-sans: "Nunito", sans-serif;
+  --font-accent: "Permanent Marker", cursive;
+
+  --color-primary-red: #C0392B;
+  --color-primary-green: #27AE60;
+  --color-warm-gold: #F39C12;
+  --color-off-white: #FDF6EC;
+  --color-dark-charcoal: #2C2C2C;
+  --color-accent-teal: #1ABC9C;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans bg-off-white text-dark-charcoal;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+.handwritten {
+  @apply font-accent;
+}
+
+/* Custom animations */
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-content {
+  display: flex;
+  animation: ticker 30s linear infinite;
+}
+
+.ticker-content:hover {
+  animation-play-state: paused;
+}
