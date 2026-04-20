@@ -7,27 +7,27 @@ const photos = [
     source: "Tacoly Moly"
   },
   {
-    url: "https://picsum.photos/seed/al-pastor-real/800/600",
-    caption: "Al Pastor Costras (Cheese Crust)",
+    url: "https://images.gotruckster.com/foodtruck/cover_photos/BMD2mydWuRs7FQIPjYlEsASuzItYYWsb9AcGgL2T.png",
+    caption: "Real Authentic Tacos",
     source: "Tacoly Moly"
   },
   {
-    url: "https://picsum.photos/seed/griddle-fresh/800/600",
+    url: "https://images.gotruckster.com/foodtruck/1486/categories/2053QQXAFao3OXSYt4OX1e4NAJdBXz8EdLZqcWRJsly2.jpeg",
     caption: "Fresh Tacos on the Griddle",
     source: "Tacoly Moly"
   },
   {
-    url: "https://picsum.photos/seed/taco-platter/800/600",
+    url: "https://images.gotruckster.com/foodtruck/1486/categories/2053hpoWp58vysGEWLbFeNuWjthhy2gKNtSQFzE4MV41.jpeg",
     caption: "Our Signature Taco Platter",
     source: "Tacoly Moly"
   },
   {
-    url: "https://picsum.photos/seed/ygor-cooking/800/600",
+    url: "https://images.gotruckster.com/foodtruck/1486/categories/2053oTR5ft85DHbsPCmyONCxFQAaQPGI9aQxN0fOx18Y.jpeg",
     caption: "Authentic Mexican Flavors",
     source: "Tacoly Moly"
   },
   {
-    url: "https://picsum.photos/seed/street-tacos-variety/800/600",
+    url: "https://images.gotruckster.com/foodtruck/1486/categories/20546omirlHpLuCCiwEsQeO34OT0imNirtHcgXtiHepx.jpeg",
     caption: "Variety of Street Tacos",
     source: "Tacoly Moly"
   }
