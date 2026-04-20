@@ -37,35 +37,36 @@ export default function Gallery() {
   return (
     <section id="gallery" className="py-24 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="font-accent text-warm-gold text-3xl mb-4 block transform rotate-2">¡Qué Chulada!</span>
-          <h2 className="text-5xl md:text-6xl font-display font-black text-dark-charcoal mb-4">
-            A Taste of <span className="text-primary-red">Tacoly Moly</span>
+        <div className="text-center mb-20 relative">
+          <span className="font-accent text-warm-gold text-4xl mb-6 block transform rotate-2 drop-shadow-sm">¡Qué Chulada!</span>
+          <h2 className="text-6xl md:text-8xl font-display font-black text-dark-charcoal mb-4 tracking-tighter">
+            THE <span className="text-primary-red italic">GALLERY</span>
           </h2>
-          <p className="text-xl text-dark-charcoal/60 font-semibold uppercase tracking-widest">
-            Real photos from our amazing customers
+          <p className="text-md text-dark-charcoal/60 font-bold uppercase tracking-[0.2em]">
+            Real Food. Real Flavor.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
           {photos.map((photo, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative aspect-[4/3] overflow-hidden rounded-[2rem] shadow-xl"
+              transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
+              className="group relative overflow-hidden rounded-[2rem] shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 break-inside-avoid"
             >
               <img 
                 src={photo.url} 
                 alt={photo.caption}
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-dark-charcoal/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                <p className="text-white font-display font-bold text-xl mb-1">{photo.caption}</p>
-                <p className="text-warm-gold text-xs font-black uppercase tracking-widest">Via {photo.source}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-dark-charcoal via-dark-charcoal/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8">
+                <p className="text-white font-display font-black text-2xl mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{photo.caption}</p>
+                <div className="w-12 h-1 bg-primary-red mb-3 rounded-full translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75"></div>
+                <p className="text-warm-gold text-xs font-black uppercase tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">Via {photo.source}</p>
               </div>
             </motion.div>
           ))}
