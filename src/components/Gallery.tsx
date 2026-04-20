@@ -12,9 +12,19 @@ const photos = [
     source: "Tacoly Moly"
   },
   {
+    url: "https://images.unsplash.com/photo-1551504734-b4631abbb7ea?auto=format&fit=crop&q=80&w=800",
+    caption: "Fresh Ingredients Daily",
+    source: "Instagram"
+  },
+  {
     url: "https://images.gotruckster.com/foodtruck/1486/categories/2053QQXAFao3OXSYt4OX1e4NAJdBXz8EdLZqcWRJsly2.jpeg",
     caption: "Fresh Tacos on the Griddle",
     source: "Tacoly Moly"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1564834724105-918b73d1b9e0?auto=format&fit=crop&q=80&w=800",
+    caption: "Perfect Breakfast Tacos",
+    source: "Yelp Reviews"
   },
   {
     url: "https://images.gotruckster.com/foodtruck/1486/categories/2053hpoWp58vysGEWLbFeNuWjthhy2gKNtSQFzE4MV41.jpeg",
@@ -25,6 +35,11 @@ const photos = [
     url: "https://images.gotruckster.com/foodtruck/1486/categories/2053oTR5ft85DHbsPCmyONCxFQAaQPGI9aQxN0fOx18Y.jpeg",
     caption: "Authentic Mexican Flavors",
     source: "Tacoly Moly"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&q=80&w=800",
+    caption: "Street Taco Perfection",
+    source: "Instagram"
   },
   {
     url: "https://images.gotruckster.com/foodtruck/1486/categories/20546omirlHpLuCCiwEsQeO34OT0imNirtHcgXtiHepx.jpeg",

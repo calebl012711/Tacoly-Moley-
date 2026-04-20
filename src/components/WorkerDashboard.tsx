@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { db, auth, signInWithGoogle, logout } from '../lib/firebase';
 import { collection, query, orderBy, onSnapshot, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
-import { Check, Clock, X, LogOut, ShieldCheck, Phone, User } from 'lucide-react';
+import { Check, Clock, X, LogOut, ShieldCheck, Phone, User, LockKeyhole } from 'lucide-react';
 
 export default function WorkerDashboard() {
   const [orders, setOrders] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [pinInput, setPinInput] = useState('');
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (u) => {
@@ -31,6 +33,17 @@ export default function WorkerDashboard() {
     };
   }, []);
 
+  const handlePinSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pinInput === '2026') {
+      setIsAuthorized(true);
+      setPinInput('');
+    } else {
+      alert("Incorrect PIN");
+      setPinInput('');
+    }
+  };
+
   const updateStatus = async (orderId: string, newStatus: string) => {
     try {
       await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
@@ -49,142 +62,197 @@ export default function WorkerDashboard() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-off-white">Loading...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#E4E3E0] font-mono text-xl">System Booting...</div>;
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-dark-charcoal p-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#141414] p-4">
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-white p-12 rounded-[3rem] shadow-2xl text-center max-w-md w-full"
+          className="bg-[#E4E3E0] p-12 rounded-lg shadow-2xl text-center max-w-md w-full border border-[#141414]"
         >
-          <div className="w-20 h-20 bg-primary-red rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-xl">
-            <ShieldCheck size={40} />
+          <div className="w-20 h-20 bg-[#141414] rounded-lg flex items-center justify-center text-[#E4E3E0] mx-auto mb-6 shadow-xl">
+            <User size={40} />
           </div>
-          <h2 className="text-4xl font-display font-black text-dark-charcoal mb-4">Worker Portal</h2>
-          <p className="text-dark-charcoal/60 mb-8">Please sign in with your authorized Google account to view orders.</p>
+          <h2 className="text-3xl font-display font-black text-[#141414] mb-2 uppercase tracking-widest">TAC-OS</h2>
+          <p className="text-[#141414]/60 font-mono text-xs mb-8 uppercase tracking-widest">Operator Identity Check Required</p>
           <button 
             onClick={signInWithGoogle}
-            className="w-full bg-primary-red text-white py-4 rounded-2xl font-black text-xl hover:bg-dark-charcoal transition-all shadow-lg flex items-center justify-center gap-3"
+            className="w-full bg-[#141414] text-[#E4E3E0] py-4 rounded-md font-mono font-bold text-sm uppercase tracking-widest hover:bg-[#FF4444] hover:text-[#141414] transition-colors border-2 border-[#141414] flex items-center justify-center gap-3"
           >
-            Sign In with Google
+            Authenticate
           </button>
         </motion.div>
       </div>
     );
   }
 
-  // Simple admin check (hardcoded for now, but firestore rules protect the data)
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#141414] p-4">
+        <motion.div 
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="bg-[#E4E3E0] p-12 rounded-lg shadow-2xl text-center max-w-md w-full border border-[#141414]"
+        >
+          <div className="w-20 h-20 bg-[#141414] rounded-lg flex items-center justify-center text-[#FF4444] mx-auto mb-6 shadow-xl">
+            <LockKeyhole size={40} />
+          </div>
+          <h2 className="text-3xl font-display font-black text-[#141414] mb-2 uppercase tracking-widest">System Locked</h2>
+          <p className="text-[#141414]/60 font-mono text-xs mb-8 uppercase tracking-widest">Authorized Personnel Only</p>
+          <form onSubmit={handlePinSubmit}>
+            <input 
+              type="password"
+              value={pinInput}
+              onChange={(e) => setPinInput(e.target.value)}
+              placeholder="Enter PIN"
+              className="w-full bg-[#141414] text-[#E4E3E0] p-4 text-center text-2xl font-mono tracking-[0.5em] rounded-md outline-none focus:border-[#FF4444] border-2 border-transparent transition-all mb-4"
+              autoFocus
+            />
+            <button 
+              type="submit"
+              className="w-full bg-[#141414] text-[#E4E3E0] py-4 rounded-md font-mono font-bold text-sm uppercase tracking-widest hover:bg-[#FF4444] transition-colors border-2 border-[#141414]"
+            >
+              Unlock Terminal
+            </button>
+          </form>
+          <button 
+            onClick={logout}
+            className="w-full mt-4 text-[#141414]/40 font-mono text-xs uppercase tracking-widest hover:text-[#141414] transition-colors"
+          >
+            Switch User
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+
   const isAdmin = user.email === "calebl012711@gmail.com";
 
   return (
-    <div className="min-h-screen bg-off-white">
+    <div className="min-h-screen bg-[#E4E3E0] font-sans">
       {/* Header */}
-      <header className="bg-white border-b border-dark-charcoal/5 sticky top-0 z-50">
+      <header className="bg-[#141414] text-[#E4E3E0] border-b-4 border-[#FF4444] sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <div className="bg-primary-red p-2 rounded-xl text-white">
+            <div className="bg-[#FF4444] p-2 rounded-sm text-[#141414]">
               <ShieldCheck size={24} />
             </div>
             <div>
-              <h1 className="text-2xl font-display font-black text-dark-charcoal">Tacoly Moly Dashboard</h1>
-              <p className="text-xs text-dark-charcoal/40 font-bold uppercase tracking-widest">Live Order Stream</p>
+              <h1 className="text-xl font-mono font-bold tracking-widest uppercase">TAC-OS</h1>
+              <p className="text-[#E4E3E0]/50 font-mono text-[10px] uppercase tracking-widest">Active Connection</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 text-sm font-bold text-dark-charcoal/60">
-              <User size={16} /> {user.displayName}
+          <div className="flex items-center gap-6">
+            <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-[#E4E3E0]/70 uppercase">
+              <User size={14} /> {user.displayName}
             </div>
             <button 
               onClick={logout}
-              className="p-2 rounded-xl hover:bg-primary-red/10 text-primary-red transition-colors"
+              className="p-2 rounded-sm text-[#E4E3E0]/50 hover:bg-[#FF4444] hover:text-[#141414] transition-colors"
               title="Logout"
             >
-              <LogOut size={24} />
+              <LogOut size={20} />
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <main className="max-w-[1400px] mx-auto p-4 sm:p-8">
+        <div className="mb-8 flex justify-between items-center">
+          <h2 className="text-2xl font-mono font-bold text-[#141414] uppercase">Live Command Center</h2>
+          <div className="text-sm font-mono text-[#141414]/60 bg-[#141414]/10 px-4 py-2 rounded-md">
+            Orders Total: <span className="font-bold">{orders.length}</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <AnimatePresence mode="popLayout">
             {orders.map((order) => (
               <motion.div
                 key={order.id}
                 layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className={`bg-white rounded-[2.5rem] shadow-xl overflow-hidden border-2 transition-all ${
-                  order.status === 'pending' ? 'border-primary-red shadow-primary-red/10' :
-                  order.status === 'preparing' ? 'border-warm-gold shadow-warm-gold/10' :
-                  order.status === 'ready' ? 'border-primary-green shadow-primary-green/10' :
-                  'border-transparent'
+                className={`bg-[#FFFFFF] border-2 shadow-sm rounded-none overflow-hidden transition-all relative ${
+                  order.status === 'pending' ? 'border-[#FF4444]' :
+                  order.status === 'preparing' ? 'border-[#FFAA00]' :
+                  order.status === 'ready' ? 'border-[#00CC44]' :
+                  'border-[#141414]/10 opacity-60 grayscale'
                 }`}
               >
-                <div className="p-8">
-                  <div className="flex justify-between items-start mb-6">
-                    <div>
-                      <h3 className="text-2xl font-display font-bold text-dark-charcoal">{order.customerName}</h3>
-                      <a href={`tel:${order.customerPhone}`} className="text-sm font-bold text-primary-red flex items-center gap-1 mt-1">
-                        <Phone size={14} /> {order.customerPhone}
-                      </a>
-                    </div>
-                    <div className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                      order.status === 'pending' ? 'bg-primary-red text-white' :
-                      order.status === 'preparing' ? 'bg-warm-gold text-dark-charcoal' :
-                      order.status === 'ready' ? 'bg-primary-green text-white' :
-                      'bg-dark-charcoal/10 text-dark-charcoal/40'
-                    }`}>
-                      {order.status}
-                    </div>
+                {/* Status Bar Top */}
+                <div className={`h-2 w-full ${
+                  order.status === 'pending' ? 'bg-[#FF4444]' :
+                  order.status === 'preparing' ? 'bg-[#FFAA00]' :
+                  order.status === 'ready' ? 'bg-[#00CC44]' :
+                  'bg-[#141414]/10'
+                }`} />
+
+                <div className="p-4 border-b border-[#141414]/10 flex justify-between items-center bg-[#f9f9f9]">
+                  <span className={`px-2 py-1 text-[10px] font-mono font-bold uppercase tracking-widest rounded-sm ${
+                    order.status === 'pending' ? 'bg-[#FF4444]/20 text-[#FF4444]' :
+                    order.status === 'preparing' ? 'bg-[#FFAA00]/20 text-[#FFAA00]' :
+                    order.status === 'ready' ? 'bg-[#00CC44]/20 text-[#00CC44]' :
+                    'bg-[#141414]/10 text-[#141414]/60'
+                  }`}>
+                    {order.status}
+                  </span>
+                  <span className="font-mono text-[10px] text-[#141414]/40 uppercase">ID: {order.id.slice(-6)}</span>
+                </div>
+
+                <div className="p-6">
+                  <div className="mb-6">
+                    <h3 className="text-xl font-bold text-[#141414]">{order.customerName}</h3>
+                    <a href={`tel:${order.customerPhone}`} className="text-xs font-mono text-[#141414]/60 hover:text-[#FF4444] flex items-center gap-1 mt-2">
+                      <Phone size={12} /> {order.customerPhone}
+                    </a>
                   </div>
 
-                  <div className="space-y-4 mb-8">
+                  <div className="space-y-3 mb-8 min-h-[100px]">
                     {order.items.map((item: any, i: number) => (
-                      <div key={i} className="flex justify-between items-center text-sm">
+                      <div key={i} className="flex justify-between items-center text-sm font-mono border-b border-dashed border-[#141414]/20 pb-2">
                         <div className="flex items-center gap-3">
-                          <span className="font-black text-primary-red">x{item.quantity}</span>
-                          <span className="font-bold text-dark-charcoal">{item.name}</span>
+                          <span className="font-bold text-[#FF4444] bg-[#FF4444]/10 px-1 py-0.5 rounded-sm">x{item.quantity}</span>
+                          <span className="text-[#141414] truncate max-w-[140px] block" title={item.name}>{item.name}</span>
                         </div>
-                        <span className="text-dark-charcoal/40">{item.price}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="border-t border-dark-charcoal/5 pt-6 flex flex-wrap gap-2">
+                  <div className="grid grid-cols-2 gap-2 mt-auto">
                     {order.status === 'pending' && (
                       <button 
                         onClick={() => updateStatus(order.id, 'preparing')}
-                        className="flex-1 bg-warm-gold text-dark-charcoal py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-dark-charcoal hover:text-white transition-all flex items-center justify-center gap-2"
+                        className="col-span-2 bg-[#FFAA00] text-[#141414] py-3 font-mono font-bold text-xs uppercase tracking-widest hover:bg-[#141414] hover:text-[#FFAA00] transition-colors border border-[#FFAA00] flex justify-center items-center gap-2"
                       >
-                        <Clock size={16} /> Start Cooking
+                        <Clock size={16} /> Prep
                       </button>
                     )}
                     {order.status === 'preparing' && (
                       <button 
                         onClick={() => updateStatus(order.id, 'ready')}
-                        className="flex-1 bg-primary-green text-white py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-dark-charcoal transition-all flex items-center justify-center gap-2"
+                        className="col-span-2 bg-[#00CC44] text-white py-3 font-mono font-bold text-xs uppercase tracking-widest hover:bg-[#141414] transition-colors border border-[#00CC44] flex justify-center items-center gap-2"
                       >
-                        <Check size={16} /> Ready!
+                        <Check size={16} /> Ready
                       </button>
                     )}
                     {order.status === 'ready' && (
                       <button 
                         onClick={() => updateStatus(order.id, 'completed')}
-                        className="flex-1 bg-dark-charcoal text-white py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-primary-green transition-all flex items-center justify-center gap-2"
+                        className="col-span-2 bg-[#141414] text-white py-3 font-mono font-bold text-xs uppercase tracking-widest hover:bg-[#E4E3E0] hover:text-[#141414] hover:border-[#141414] transition-all border border-[#141414] flex justify-center items-center gap-2"
                       >
-                        <Check size={16} /> Complete
+                        <Check size={16} /> Clear
                       </button>
                     )}
                     {isAdmin && (
                       <button 
                         onClick={() => deleteOrder(order.id)}
-                        className="p-3 rounded-xl bg-primary-red/10 text-primary-red hover:bg-primary-red hover:text-white transition-all"
+                        className="w-full flex items-center justify-center p-3 font-mono text-xs text-[#FF4444] border border-[#FF4444] hover:bg-[#FF4444] hover:text-white transition-colors uppercase col-span-2 mt-2"
                       >
-                        <X size={16} />
+                        <X size={14} className="mr-1" /> Purge Record
                       </button>
                     )}
                   </div>
@@ -195,10 +263,12 @@ export default function WorkerDashboard() {
         </div>
 
         {orders.length === 0 && (
-          <div className="text-center py-24">
-            <div className="text-6xl mb-4">🌮</div>
-            <h2 className="text-3xl font-display font-bold text-dark-charcoal/40">No active orders.</h2>
-            <p className="text-dark-charcoal/20">Time to prep some salsa!</p>
+          <div className="text-center py-32 border-2 border-dashed border-[#141414]/20 rounded-lg max-w-2xl mx-auto mt-12 bg-[#FFFFFF]">
+            <div className="text-[#141414]/20 mb-4 inline-block">
+              <ShieldCheck size={64} />
+            </div>
+            <h2 className="text-xl font-mono font-bold text-[#141414]/60 uppercase tracking-widest">No Active Vectors</h2>
+            <p className="text-[#141414]/40 font-mono text-xs mt-2 uppercase tracking-widest">Awaiting Transmission...</p>
           </div>
         )}
       </main>
